@@ -14,19 +14,18 @@ console.log("ENV KEY:", process.env.GEMINI_API_KEY);
 app.use(express.json());
 app.use(cors());
 
-// ✅ पहले import करो
+
 const authRoutes = require("./routes/authRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const noteRoutes = require("./routes/noteRoutes");
 app.use("/api/dashboard", require("./routes/dashboardRoutes"));
 const quizRoutes = require("./routes/quizRoutes");
 
-// ✅ फिर console log करो
+
 console.log("AUTH ROUTES:", authRoutes);
 console.log("CHAT ROUTES:", chatRoutes);
 console.log("AUTH MIDDLEWARE:", require("./middleware/authMiddleware"));
 
-// ✅ फिर use करो
 app.use("/api/auth", authRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/notes", noteRoutes);
