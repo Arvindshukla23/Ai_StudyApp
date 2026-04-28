@@ -1,7 +1,61 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Bell } from "lucide-react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const Navbar = ({ user }) => {
+const Navbar = () => {
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
+  // ✅ SAFE LOAD USER
+  useEffect(() => {
+    try {
+      const storedUser = localStorage.getItem("user");
+
+      if (storedUser && storedUser !== "undefined") {
+        setUser(JSON.parse(storedUser));
+      }
+    } catch (err) {
+      console.log("Navbar parse error:", err);
+      setUser(null);
+    }
+  }, []);
+
+  // 🔥 Profile Image Upload
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("profilePic", file);
+
+    const token = localStorage.getItem("token");
+
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/api/user/update-profile",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // 🚨 SAFE SAVE (VERY IMPORTANT)
+      if (res.data && res.data.user) {
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+        setUser(res.data.user);
+      } else {
+        console.log("⚠ Invalid user response:", res.data);
+      }
+
+    } catch (err) {
+      console.log(err);
+      alert("Image upload failed ❌");
+    }
+  };
+
   return (
     <div className="w-full h-16 flex items-center justify-between px-6 border-b bg-white">
       
@@ -26,21 +80,40 @@ const Navbar = ({ user }) => {
         </div>
 
         {/* 👤 Profile */}
-        <div className="flex items-center gap-3 cursor-pointer">
+        <div className="flex items-center gap-3">
           
-          {/* Profile Image (dynamic fallback) */}
-          <img
-            src={user?.profilePic || "https://i.pravatar.cc/40"}
-            alt="profile"
-            className="w-10 h-10 rounded-full"
+          {/* Hidden file input */}
+          <input
+            type="file"
+            id="profileUpload"
+            className="hidden"
+            onChange={handleImageChange}
           />
 
-          <div className="leading-tight">
+          {/* Profile Image */}
+          <img
+            onClick={() =>
+              document.getElementById("profileUpload").click()
+            }
+            src={
+              user?.profilePic
+                ? `http://localhost:5000${user.profilePic}?t=${Date.now()}`
+                : "https://i.pravatar.cc/40"
+            }
+            alt="profile"
+            className="w-10 h-10 rounded-full object-cover cursor-pointer"
+          />
+
+          {/* Name + Role */}
+          <div
+            className="leading-tight cursor-pointer"
+            onClick={() => navigate("/profile")}
+          >
             <p className="text-sm font-semibold">
               {user?.name || "User"}
             </p>
             <p className="text-xs text-gray-500">
-              Student
+              {user?.role || "Student"}
             </p>
           </div>
 

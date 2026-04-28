@@ -7,6 +7,16 @@ const userSchema = new mongoose.Schema({
     unique: true,
   },
   password: String,
+
+  // 🔥 NEW FIELDS
+  profilePic: {
+    type: String,
+    default: "",
+  },
+  role: {
+    type: String,
+    default: "Student",
+  },
 });
 
 module.exports = mongoose.model("User", userSchema);

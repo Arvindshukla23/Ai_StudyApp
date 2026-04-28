@@ -39,12 +39,12 @@ const LoginPage = () => {
 
     console.log("✅ Login Success:", res.data);
 
-    // 🔥 सही data extract करो
     const data = res.data;
 
-    // 🔥 SAVE DATA (FIXED)
+    // 🔥 SAVE DATA 
     if (data.token && data.user) {
       localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user)); // 🔥 FIX
       
 
       console.log("💾 Saved User:", data.user);

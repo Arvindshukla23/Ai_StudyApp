@@ -18,8 +18,8 @@ const ChatPage = () => {
         { message: input },
         {
           headers: {
-            Authorization: token,
-          },
+            Authorization: `Bearer ${token}`,
+          }
         }
       );
 
@@ -87,9 +87,9 @@ const ChatPage = () => {
         />
 
         <button
-          type="button" // 🔥 VERY IMPORTANT
+          type="button" // 
           onClick={() => {
-            console.log("🔥 BUTTON CLICKED");
+            console.log("BUTTON CLICKED");
             sendMessage();
           }}
           className="bg-blue-600 text-white px-4 rounded-lg hover:bg-blue-700"

@@ -1,6 +1,21 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-const WelcomeText = ({ user }) => {
+const WelcomeText = () => {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    try {
+      const storedUser = localStorage.getItem("user");
+
+      if (storedUser && storedUser !== "undefined") {
+        setUser(JSON.parse(storedUser));
+      }
+    } catch (error) {
+      console.log("WelcomeText parse error:", error);
+      setUser(null);
+    }
+  }, []);
+
   return (
     <div className="px-6 mt-6">
       <h1 className="text-2xl font-bold text-gray-800">

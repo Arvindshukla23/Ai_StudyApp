@@ -4,43 +4,46 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 
-
-
 const app = express();
 
-console.log("ENV KEY:", process.env.GEMINI_API_KEY);
-
-// middleware
+// ✅ Middleware
 app.use(express.json());
 app.use(cors());
 
-
+// ✅ ROUTES IMPORT
 const authRoutes = require("./routes/authRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const noteRoutes = require("./routes/noteRoutes");
-app.use("/api/dashboard", require("./routes/dashboardRoutes"));
 const quizRoutes = require("./routes/quizRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
+const userRoutes = require("./routes/userRoutes");
 
+// ✅ DEBUG LOG
+console.log("✅ All routes loaded");
 
-console.log("AUTH ROUTES:", authRoutes);
-console.log("CHAT ROUTES:", chatRoutes);
-console.log("AUTH MIDDLEWARE:", require("./middleware/authMiddleware"));
-
+// ✅ ROUTES USE (IMPORTANT ORDER CLEANED)
 app.use("/api/auth", authRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/notes", noteRoutes);
 app.use("/api/quiz", quizRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/user", userRoutes); // 🔥 THIS IS YOUR MAIN ROUTE
 
-
-// create uploads folder static access
+// ✅ STATIC FOLDER (FOR PROFILE IMAGE)
 app.use("/uploads", express.static("uploads"));
 
-// DB connect
-mongoose.connect(process.env.MONGO_URI)
+// ✅ DB CONNECT
+mongoose
+  .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected ✅"))
-  .catch(err => console.log(err));
+  .catch((err) => console.log("DB Error:", err));
 
-// server start
+// ✅ TEST ROUTE (DEBUG)
+app.get("/", (req, res) => {
+  res.send("API Running 🚀");
+});
+
+// ✅ SERVER START
 app.listen(5000, () => {
   console.log("Server running on port 5000 🚀");
 });
